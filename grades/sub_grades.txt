@@ -1,0 +1,4 @@
+Group 116 scored 0 point for test1a
+Group 117 scored 0 point for test1a
+Group 118 scored 1 point for test1a
+Group 122 scored 1 point for test1a
