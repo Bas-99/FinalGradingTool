@@ -1,29 +1,44 @@
+'''
+    *************************************************************
+    *                   grader_GUI.py                           *
+    *************************************************************
+'''
+
+# ----------------------------
+# Importing relevant libraries
+# ----------------------------
+
 import PySimpleGUI as sg
-import os.path
 import os
-from AssignmentProperties import gradeAssignments
+import json
 import time
+
+# --------------------------------------
+# Importing functions from other modules
+# --------------------------------------
+
+from AssignmentProperties import gradeAssignments
 from SimulationExecuter import simulationExecuter
 
 # -------------------------------
 # Required Folder Setup Functions
 # -------------------------------
 
-test_names = ["test1a", "test1b", "test2", "test3a","test3b"]
+test_names = ["test1a", "test1b", "test2", "test3a", "test3b"]
 
 def StudentAssignmentFolder(general_path):
-    dir_assignments = os.path.join(general_path,"all_assignments")
+    dir_assignments = os.path.join(general_path, "all_assignments")
     if not os.path.exists(dir_assignments):
         os.makedirs(dir_assignments)
     print("all_assignments folder has been added")
     return dir_assignments
 
-def MlModelFolder(test_names,general_path):
-    dir_models = os.path.join(general_path,"ml_models")
+def MlModelFolder(test_names, general_path):
+    dir_models = os.path.join(general_path, "ml_models")
     if not os.path.exists(dir_models):
         os.makedirs(dir_models)
     for test in test_names:
-        test_model_dir = os.path.join(dir_models,test)
+        test_model_dir = os.path.join(dir_models, test)
         if not os.path.exists(test_model_dir):
             os.makedirs(test_model_dir)
     print("ml_models folder has been added")
@@ -31,30 +46,30 @@ def MlModelFolder(test_names,general_path):
 
 # making a folder to store the scratch video files into
 def ScratchFolder():
-    dir_scratch = os.path.join(general_path,"scratch_videos")
+    dir_scratch = os.path.join(general_path, "scratch_videos")
     if not os.path.exists(dir_scratch):
         os.makedirs(dir_scratch)
     return dir_scratch
 
 # run this function to get all group numbers of the uploaded assignments
 def getAssignments():
-    assignments = os.listdir(os.path.join(general_path,"all_assignments"))
+    assignments = os.listdir(os.path.join(general_path, "all_assignments"))
     return assignments
 
 # function to add sub-directories to store the video files of the tested simulations into
 def FolderAdder(test_names):
-    dir_simulations = os.path.join(general_path,"all_assignment_simulations")
+    dir_simulations = os.path.join(general_path, "all_assignment_simulations")
     if not os.path.exists(dir_simulations):
         os.makedirs(dir_simulations)
     for test in test_names:
-        test_dir = os.path.join(dir_simulations,test)
+        test_dir = os.path.join(dir_simulations, test)
         if not os.path.exists(test_dir):
             os.makedirs(test_dir)
     return dir_simulations
 
-# -------------------
-# Defining GUI Layout
-# -------------------
+# ---------------------------
+# Defining GUI Window Layouts
+# ---------------------------
 
 # defining the home screen of the GUI application for the autograding tool.
 # this homescreen should contain a short introduction and navigation to
@@ -63,8 +78,10 @@ def make_Home():
     str_title = 'Welcome to the FESTO automated grading tool!'
     str_welcome = 'This tool is an aid in helping to grade 4TC00 assignments. \n' \
                   'Below you can select what functionalities you want to use. \n' \
-                  'If this is the first time running the program, go to the directory setup. \n' \
-                  'Otherwise you can go and run the simulations or if this is already done go to the grading.'
+                  'If this is the first time running the program, go to the ' \
+                  'directory setup. \n' \
+                  'Otherwise you can go and run the simulations ' \
+                  'or if this is already done go to the grading.'
     column1 = (
         [sg.Text('Directory setup:')],
         [sg.Button('-DIR SETUP-')]
@@ -80,17 +97,20 @@ def make_Home():
     )
 
     layout = [
-        [sg.Text(str_title, font=("Helvetica",25))],
-        [sg.Image('Resources/festo.png',size=(1100,250))],
+        [sg.Text(str_title, font=("Helvetica", 25))],
+        [sg.Image('Resources/festo.png', size=(1100, 250))],
         [sg.HSeparator()],
         [sg.Text(str_welcome, font=("Helvetica",12)), ],
         [sg.HSeparator()],
-        [sg.Text('Directory setup:',size=(20,1)),sg.VSeparator(),
-         sg.Text('Simulation runner:',size=(20,1)),sg.VSeparator(),
-         sg.Text('Grading assignments:',size=(20,1))],
-        [sg.Button('-DIR SETUP-',size=(20,1),pad=(3,0)),sg.VSeparator(),
-         sg.Button('-SIM RUNNER-',size=(20,1),pad=(3,0)),sg.VSeparator(),
-         sg.Button('-GRADER-',size=(20,1),pad=(3,0))],
+
+        [sg.Text('Directory setup:', size=(20, 1)), sg.VSeparator(),
+         sg.Text('Simulation runner:', size=(20, 1)), sg.VSeparator(),
+         sg.Text('Grading assignments:', size=(20, 1))],
+
+        [sg.Button('-DIR SETUP-', size=(20, 1), pad=(3, 0)), sg.VSeparator(),
+         sg.Button('-SIM RUNNER-', size=(20, 1), pad=(3, 0)), sg.VSeparator(),
+         sg.Button('-GRADER-', size=(20, 1), pad=(3, 0))],
+
         [sg.HSeparator()],
         [sg.Button('-EXIT-')]
     ]
@@ -101,35 +121,39 @@ def make_Home():
 # to add the assignments to the general path.
 def make_DirSetup():
     layout = [
-        [sg.Text('Directory setup',font=("Helvetica", 15))],
+        [sg.Text('Directory setup',font=("Helvetica", 15)), sg.Button('refresh')],
         [sg.HSeparator()],
-        [sg.Text('On this page, the general derectory, the TwinCat directory and Unity direcory have to be set.')],
+        [sg.Text('On this page, the general directory, '
+                 'the TwinCat directory and Unity directory have to be set.')],
 
-        [sg.Text('Select a general directory:',size=(35,1)),
-         sg.Input(size=(55,1)), sg.FolderBrowse(key="-IN1-"),sg.Button("Submit directory",size=(14,1))],
+        [sg.Text('Select a general directory:', size=(35, 1)),
+         sg.Input(size=(55, 1), key='input dir'), sg.FolderBrowse(key="-IN1-"),
+         sg.Button("Submit directory", size=(14, 1))],
 
-        [sg.Text('Select the directory for TwinCat (devenv.exe):',size=(35,1)),
-         sg.Input(size=(55,1)), sg.FileBrowse(key="-IN2-"),sg.Button("Submit TwinCat",size=(14,1))],
+        [sg.Text('Select the directory for TwinCat (devenv.exe):', size=(35, 1)),
+         sg.Input(size=(55, 1), key='input TwinCat'), sg.FileBrowse(key="-IN2-"),
+         sg.Button("Submit TwinCat", size=(14, 1))],
 
-        [sg.Text('Select the directory for Unity:',size=(35,1)),
-         sg.Input(size=(55,1)),sg.FileBrowse(key="-IN3-"),sg.Button("Submit Unity",size=(14,1))],
+        [sg.Text('Select the directory for Unity:', size=(35, 1)),
+         sg.Input(size=(55, 1), key='input unity'), sg.FileBrowse(key="-IN3-"),
+         sg.Button("Submit Unity", size=(14, 1))],
 
         [sg.HSeparator()],
         [sg.Text('When the above three directories are specified, '
                  'the directory initializers can be run by clicking th buttons below:')],
-        [sg.Button("-DIR INITIALIZER-"),sg.Button("-DIR INITIALIZER2-")],
+        [sg.Button("-DIR INITIALIZER-"), sg.Button("-DIR INITIALIZER2-")],
         [sg.HSeparator()],
         [sg.Text("Please open the File Explorer and navigate to the specified general directory, \n"
                  "you will see the new all_assignments folder in which you have to un-zip the \n"
                  "to be graded files. When this is done, go to the next step")],
         [sg.HSeparator()],
-        [sg.Button('-SIM RUNNER-'),sg.Button('-HOME-')]
+        [sg.Button('-SIM RUNNER-'), sg.Button('-HOME-')]
     ]
     return sg.Window('Directory setup', layout, finalize=True)
 
 def make_SimRunner():
     layout = [
-        [sg.Text('Simulation runner',font=("Helvetica", 15))],
+        [sg.Text('Simulation runner', font=("Helvetica", 15))],
         [sg.HSeparator()],
         [sg.Text("Click the button below to start executing the tests on the uploaded assignments. \n"
                  "Take care of the following points: \n"
@@ -141,17 +165,17 @@ def make_SimRunner():
         [sg.HSeparator()],
         [sg.Button('-GRADER-'), sg.Button('-HOME-')]
     ]
-    return sg.Window('Simulation runner',layout,finalize=True)
+    return sg.Window('Simulation runner', layout, finalize=True)
 
 def make_Grader():
     layout = [
-        [sg.Text('Grading Assignments',font=("Helvetica", 15))],
+        [sg.Text('Grading Assignments', font=("Helvetica", 15))],
         [sg.HSeparator()],
         [sg.Text('On this page the recorded tests performed on the assignments can be graded')],
-        [sg.Text('Click here to start grading:'),sg.Button('Start Grading')],
+        [sg.Text('Click here to start grading:'), sg.Button('Start Grading')],
         [sg.HSeparator()],
-        [sg.Text("Results for tested assignments",font=("Helvetica", 13))],
-        [sg.Text("",key="grades",size=(50,25))],
+        [sg.Text("Results for tested assignments", font=("Helvetica", 13))],
+        [sg.Text("", key="grades", size=(50,25))],
         [sg.HSeparator()],
         [sg.Text("Export grades to directory"), sg.Button("Export Grades")],
         [sg.HSeparator()],
@@ -159,26 +183,53 @@ def make_Grader():
     ]
     return sg.Window('Grading Assignments', layout, finalize=True)
 
+# ------------------
+# Save and Load Data
+# ------------------
+
+def saveDirs(general_path, path_TwinCat, path_unity, dir_assignments, dir_models):
+    dirs = [general_path, path_TwinCat, path_unity, dir_assignments, dir_models]
+    with open('savedData.json', 'w') as f:
+        json.dump(dirs, f)
+
+def loadDirs():
+    f = open('savedData.json')
+    data = json.load(f)
+    return data
+
+# ------------------------
+# Defining all GUI windows
+# ------------------------
+
 window1, window2, window3, window4 = make_Home(), None, None, None
 
-dir_list = []
+# -------------------------------------------------
+# Making dispatch dictionary to store all functions
+# -------------------------------------------------
 
-dispatch_dictionary = {'Start Grading':gradeAssignments,
-                       '-dir initializer-':StudentAssignmentFolder,
-                       '-dir initializer2':MlModelFolder,
-                       '-SIM EXECUTER-':simulationExecuter}
+dispatch_dictionary = {'Start Grading': gradeAssignments,
+                       '-dir initializer-': StudentAssignmentFolder,
+                       '-dir initializer2': MlModelFolder,
+                       '-SIM EXECUTER-': simulationExecuter}
+
+# ----------------------
+# Initializing variables
+# ----------------------
 
 general_path = None
 path_TwinCat = None
 path_unity = None
+
 dir_assignments = None
 dir_simulations = None
-assignments = None
+dir_models = None
 dir_scratch = None
 
-# ----------------------
-# Running Functional GUI
-# ----------------------
+assignments = None
+
+# ----------------------------------
+# Loop to run GUI windows and events
+# ----------------------------------
 
 while True:
     window, event, values = sg.read_all_windows()
@@ -186,22 +237,49 @@ while True:
     if window == window1:
         if event == '-DIR SETUP-':
             window1.hide()
+            if os.path.exists('savedData.json'):
+                data = loadDirs()
+                if general_path is None:
+                    general_path = data[0]
+                if path_TwinCat is None:
+                    path_TwinCat = data[1]
+                if path_unity is None:
+                    path_unity = data[2]
             window2 = make_DirSetup()
         elif event == '-SIM RUNNER-':
             window1.hide()
+            if os.path.exists('savedData.json'):
+                data = loadDirs()
+                if general_path is None:
+                    general_path = data[0]
+                if path_TwinCat is None:
+                    path_TwinCat = data[1]
+                if path_unity is None:
+                    path_unity = data[2]
             window3 = make_SimRunner()
         elif event == '-GRADER-':
             window1.hide()
+            if os.path.exists('savedData.json'):
+                data = loadDirs()
+                if general_path is None:
+                    general_path = data[0]
+                if path_TwinCat is None:
+                    path_TwinCat = data[1]
+                if path_unity is None:
+                    path_unity = data[2]
             window4 = make_Grader()
         elif event == '-EXIT-' or event == sg.WIN_CLOSED:
             break
 
     if window == window2:
+
         if event == '-SIM RUNNER-':
             window2.hide()
+            saveDirs(general_path, path_TwinCat, path_unity, dir_assignments, dir_models)
             window3 = make_SimRunner()
         elif event == '-HOME-':
             window2.hide()
+            saveDirs(general_path, path_TwinCat, path_unity, dir_assignments, dir_models)
             window1 = make_Home()
         elif event == "Submit directory" and len(values["-IN1-"]) != 0:
             general_path = values["-IN1-"]
@@ -219,7 +297,15 @@ while True:
             func_to_call = dispatch_dictionary['-dir initializer2']
             dir_models = func_to_call(test_names, values["-IN1-"])
         elif event == sg.WIN_CLOSED:
+            saveDirs(general_path, path_TwinCat, path_unity, dir_assignments, dir_models)
             break
+        elif event == 'refresh':
+            if general_path is not None:
+                window.Element('input dir').Update(value=general_path)
+            if path_TwinCat is not None:
+                window.Element('input TwinCat').Update(value=path_TwinCat)
+            if path_unity is not None:
+                window.Element('input unity').Update(value=path_unity)
 
     if window == window3:
         if event == '-GRADER-':
@@ -253,13 +339,13 @@ while True:
             sub_scores, final_scores = func_to_call(os.path.join(general_path, "all_assignment_simulations"),
                                                     os.path.join(general_path, "ml_models"),
                                                     test_names)
-            str = ""
+            str_final = ""
             for final_score in final_scores:
-                if len(str) == 0:
-                    str = final_score
+                if len(str_final) == 0:
+                    str_final = final_score
                 else:
-                    str = str + os.linesep + final_score
-            window["grades"].update(value=str)
+                    str_final = str_final + os.linesep + final_score
+            window["grades"].update(value=str_final)
             print(str)
         elif event == '-EXIT-' or event == sg.WIN_CLOSED:
             break

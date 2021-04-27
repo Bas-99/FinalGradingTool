@@ -1,8 +1,23 @@
+'''
+    *************************************************************
+    *                  AssignmentProperties.py                  *
+    *************************************************************
+'''
+
+# ----------------------------
+# Importing relevant libraries
+# ----------------------------
+
 import time
 import os
-from tensorflow.keras.models import load_model
-from Video2Frames import create_data
 import numpy as np
+from tensorflow.keras.models import load_model
+
+# --------------------------------------
+# Importing functions from other Modules
+# --------------------------------------
+
+from Video2Frames import create_data
 
 # -------------------------------
 # Defining A Class for Assignment
@@ -25,24 +40,25 @@ class Assignment(object):
         return sum(self.scores)
 
     def getSubScoreString(self, assignment, cnt, test_name):
-        str = "Group {} got {} points for {}".format(
+        str_score = "Group {} got {} points for {}".format(
             assignment.group, assignment.scores[cnt], test_name
         )
-        return str
+        return str_score
 
-    def getFinalScoreString(self, assignment,test_names):
-        str = "Group {} got {} points out of {} total".format(
+    def getFinalScoreString(self, assignment, test_names):
+        str_final = "Group {} got {} points out of {} total".format(
             assignment.group, assignment.getFinalScore(), len(test_names)
         )
-        return str
+        return str_final
+
 
 # -----------------------------------------
 # Function to Instances to Class Assignment
 # -----------------------------------------
 
-def gradeAssignments(dir,dirm,test_names):
+def gradeAssignments(dirs, dirm, test_names):
     seq_len = [250, 350, 350, 350, 350]
-    dir_simulations = dir
+    dir_simulations = dirs
     dir_models = dirm
     classes = ["correct", "incorrect"]
 
@@ -106,7 +122,7 @@ def gradeAssignments(dir,dirm,test_names):
             sub_score = assignment.getSubScoreString(assignment, cnt, test_name)
             sub_scores.append(sub_score)
             cnt += 1
-        final_score = assignment.getFinalScoreString(assignment,test_names)
+        final_score = assignment.getFinalScoreString(assignment, test_names)
         final_scores.append(final_score)
 
     return sub_scores, final_scores

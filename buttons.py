@@ -1,14 +1,19 @@
-#----------------------------------------------------------------------------------------------------------------------#
-#----------------------------------------------buttons.py--------------------------------------------------------------#
-#----------------------------------------------------------------------------------------------------------------------#
-# This file defines all physical buttons existing in the Digital Twin environment. Every button has its own function   #
-# such that one can call a different sequence of buttons, which will result in a different setup or action.            #
-#----------------------------------------------------------------------------------------------------------------------#
+'''
+    *************************************************************
+    *                       buttons.py                          *
+    *************************************************************
+'''
+
+# ----------------------------
+# Importing relevant libraries
+# ----------------------------
 
 import pyautogui
 import time
 
-# defining the buttons for the digital twin environment.
+# ----------------------------------
+# Definition of Digital Twin Buttons
+# ----------------------------------
 
 def fill1():
     # filling the left stack
@@ -51,11 +56,8 @@ def startButton():
 
 def resetButton():
     # pressing the reset button
-    pyautogui.click(287,488)
+    pyautogui.click(287, 488)
 
 def stopButton():
     # pressing the stop button
-    pyautogui.click(319,464)
-
-def testButton():
-    print("test")
+    pyautogui.click(319, 464)

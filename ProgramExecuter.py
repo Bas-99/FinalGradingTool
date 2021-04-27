@@ -1,9 +1,12 @@
-#----------------------------------------------------------------------------------------------------------------------#
-#-------------------------------------------ProgramExecuter.py---------------------------------------------------------#
-#----------------------------------------------------------------------------------------------------------------------#
-# This file contains two functions, one for starting the FESTO simulation file and the TwinCat software. The other     #
-# function closes both these application files                                                                         #
-#----------------------------------------------------------------------------------------------------------------------#
+'''
+    *************************************************************
+    *                   ProgramExecuter.py                      *
+    *************************************************************
+'''
+
+# ----------------------------
+# Importing relevant libraries
+# ----------------------------
 
 import os
 import pyautogui
@@ -13,7 +16,11 @@ import time
 import os.path
 import signal
 
-def appRunner(path_unity,path_TwinCat,folder_dh_DT):
+# ------------------------------
+# App Runner function definition
+# ------------------------------
+
+def appRunner(path_unity, path_TwinCat, folder_dh_DT):
     global run_once
     # definition of the required file names (standard names)
     dir_sim = path_unity
@@ -24,7 +31,7 @@ def appRunner(path_unity,path_TwinCat,folder_dh_DT):
     sim_file = 'dh_plc_DT.sln'
 
     file_dh_DT = 'dh_DT.xml'
-    dir_dh_DT = os.path.join(folder_dh_DT, file_dh_DT).replace("/","\\")
+    dir_dh_DT = os.path.join(folder_dh_DT, file_dh_DT).replace("/", "\\")
 
     # the following line will open the TwinCat program
     if "devenv.exe" in (i.name() for i in psutil.process_iter()):
@@ -42,7 +49,7 @@ def appRunner(path_unity,path_TwinCat,folder_dh_DT):
     time.sleep(2)
 
     # press the FILE button, top left (1920x1080), and open project/solution
-    pyautogui.click(28,50)
+    pyautogui.click(28, 50)
     pyautogui.moveTo(28, 109, duration=0.2, tween=pyautogui.easeInOutQuad)
     pyautogui.moveTo(465, 109, duration=0.4, tween=pyautogui.easeInOutQuad)
     pyautogui.click(465, 109)
@@ -56,7 +63,7 @@ def appRunner(path_unity,path_TwinCat,folder_dh_DT):
 
     # navigating through the menu on the left to go to the CIF folder
     time.sleep(15)
-    pyautogui.click(102,272)
+    pyautogui.click(102, 272)
     time.sleep(0.5)
     pyautogui.press('down')
     pyautogui.press('down')
@@ -97,7 +104,7 @@ def appRunner(path_unity,path_TwinCat,folder_dh_DT):
     time.sleep(3)
 
     # the runtime will be activated and restarted
-    pyautogui.click(262,113)
+    pyautogui.click(262, 113)
     time.sleep(5)
     pyautogui.press('enter')
     time.sleep(10)
@@ -105,7 +112,7 @@ def appRunner(path_unity,path_TwinCat,folder_dh_DT):
     time.sleep(5)
 
     # the system will login on the corresponding port
-    pyautogui.click(1004,113)
+    pyautogui.click(1004, 113)
     time.sleep(5)
     pyautogui.press('enter')
     time.sleep(5)
@@ -123,7 +130,7 @@ def appRunner(path_unity,path_TwinCat,folder_dh_DT):
     pyautogui.press('tab')
     pyautogui.keyUp('alt')
     time.sleep(2)
-    pyautogui.click(1029,113)
+    pyautogui.click(1029, 113)
 
     # the simulation window is reopened and maximized
     time.sleep(5)
@@ -136,11 +143,16 @@ def appRunner(path_unity,path_TwinCat,folder_dh_DT):
     user32.ShowWindow(hWnd, SW_MAXIMISE)
     time.sleep(5)
 
+# ------------------------------
+# App Closer function definition
+# ------------------------------
+
 def appCloser():
     for pid in (process.pid for process in psutil.process_iter() if process.name() == "devenv.exe"):
         os.kill(pid,signal.SIGTERM)
     print("TwinCat successfully closed")
-    for pid in (process.pid for process in psutil.process_iter() if process.name() == "Festo MPS Distributing and Handling.exe"):
-        os.kill(pid,signal.SIGTERM)
+    for pid in (process.pid for process in psutil.process_iter() if
+                process.name() == "Festo MPS Distributing and Handling.exe"):
+        os.kill(pid, signal.SIGTERM)
     print("Unity successfully closed")
 

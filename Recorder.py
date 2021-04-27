@@ -1,9 +1,12 @@
-#----------------------------------------------------------------------------------------------------------------------#
-#------------------------------------------RecorderAndFilter.py--------------------------------------------------------#
-#----------------------------------------------------------------------------------------------------------------------#
-# This file contains two functions, one function is the screen recorder. The other function makes sure the correct     #
-# frames are filtered and saved with the correct name                                                                  #
-#----------------------------------------------------------------------------------------------------------------------#
+'''
+    *************************************************************
+    *                       Recorder.py                         *
+    *************************************************************
+'''
+
+# ----------------------------
+# Importing relevant libraries
+# ----------------------------
 
 import os
 import numpy as np
@@ -11,9 +14,12 @@ import cv2
 import mss
 import mss.tools
 import time
-import os.path
 
-def screenRec(fps,sim_time,fourcc_avi,name,widths,heights,sizes,ofsets_h,ofsets_v):
+# --------------------------------------
+# Definition of screen recorder function
+# --------------------------------------
+
+def screenRec(fps, sim_time, fourcc_avi, name, widths, heights, sizes, ofsets_h, ofsets_v):
     # output videos
     output_avi = cv2.VideoWriter(name, fourcc_avi, fps, sizes)
 
@@ -54,11 +60,15 @@ def screenRec(fps,sim_time,fourcc_avi,name,widths,heights,sizes,ofsets_h,ofsets_
     # de-allocate any associated memory usage
     cv2.destroyAllWindows()
 
-def frameFilter(name,fps,height,width,save_path_test,fourcc_avi,fileName,assignments):
+# -----------------------------------------------
+# Definition of reallocater and resizing function
+# -----------------------------------------------
+
+def frameFilter(name, fps, height, width, save_path_test, fourcc_avi, fileName, assignments):
     # setting parameters
     all_frames = []
 
-    size = (width,height)
+    size = (width, height)
 
     vs = cv2.VideoCapture(name)
 
@@ -79,7 +89,8 @@ def frameFilter(name,fps,height,width,save_path_test,fourcc_avi,fileName,assignm
         if key == ord("q"):
             break
 
-    prod_out = cv2.VideoWriter(os.path.join(save_path_test, fileName + assignments + ".avi"), fourcc_avi, fps, (64, 64))
+    prod_out = cv2.VideoWriter(os.path.join(save_path_test, fileName + assignments + ".avi"),
+                               fourcc_avi, fps, (64, 64))
 
     for frame in all_frames:
         frame1 = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
