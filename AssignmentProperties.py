@@ -125,7 +125,7 @@ def gradeAssignments(test_names, general_path):
         final_score = assignment.getFinalScoreString(assignment, test_names)
         final_scores.append(final_score)
 
-    all_scores = [sub_scores, final_scores]
+    all_scores = sub_scores + final_scores
 
     grade_file_name = "final_grades.txt"
     completeName = os.path.join(general_path,grade_file_name)
