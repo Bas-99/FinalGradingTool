@@ -336,9 +336,8 @@ while True:
             window1 = make_Home()
         elif event in dispatch_dictionary:
             func_to_call = dispatch_dictionary[event]
-            sub_scores, final_scores = func_to_call(os.path.join(general_path, "all_assignment_simulations"),
-                                                    os.path.join(general_path, "ml_models"),
-                                                    test_names)
+            sub_scores, final_scores = func_to_call(test_names, general_path)
+
             str_final = ""
             for final_score in final_scores:
                 if len(str_final) == 0:

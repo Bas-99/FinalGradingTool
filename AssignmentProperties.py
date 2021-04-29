@@ -56,10 +56,10 @@ class Assignment(object):
 # Function to Instances to Class Assignment
 # -----------------------------------------
 
-def gradeAssignments(dirs, dirm, test_names):
+def gradeAssignments(test_names, general_path):
     seq_len = [250, 350, 350, 350, 350]
-    dir_simulations = dirs
-    dir_models = dirm
+    dir_simulations = os.path.join(general_path, "all_assignment_simulations")
+    dir_models = os.path.join(general_path, "ml_models")
     classes = ["correct", "incorrect"]
 
     assignments = []
@@ -124,5 +124,15 @@ def gradeAssignments(dirs, dirm, test_names):
             cnt += 1
         final_score = assignment.getFinalScoreString(assignment, test_names)
         final_scores.append(final_score)
+
+    all_scores = [sub_scores, final_scores]
+
+    grade_file_name = "final_grades.txt"
+    completeName = os.path.join(general_path,grade_file_name)
+
+    grade_file = open(completeName, "w")
+    for line in all_scores:
+        grade_file.write('{}\n'.format(line))
+    grade_file.close()
 
     return sub_scores, final_scores
