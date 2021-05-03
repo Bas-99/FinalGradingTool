@@ -9,6 +9,7 @@
 # ----------------------------
 
 import PySimpleGUI as sg
+import numpy as np
 import os
 import json
 import time
@@ -167,15 +168,21 @@ def make_SimRunner():
     ]
     return sg.Window('Simulation runner', layout, finalize=True)
 
+all_results = []
+
 def make_Grader():
     layout = [
-        [sg.Text('Grading Assignments', font=("Helvetica", 15))],
+        [sg.Text('Grading Assignments', font=("Helvetica", 15)),sg.Button("refresh_grades")],
         [sg.HSeparator()],
         [sg.Text('On this page the recorded tests performed on the assignments can be graded')],
         [sg.Text('Click here to start grading:'), sg.Button('Start Grading')],
         [sg.HSeparator()],
-        [sg.Text("Results for tested assignments", font=("Helvetica", 13))],
-        [sg.Text("", key="grades", size=(50,25))],
+        [sg.Text("Final scores per assignments", font=("Helvetica", 13), size=(35, 1)), sg.VSeparator(),
+         sg.Text("Sub-scores for selected assignment", font=("Helvetica", 13), size=(35, 1))],
+        [sg.HSeparator()],
+        [sg.Combo(groups, key='drop-down'),sg.Button("select group")],
+        [sg.Text("", key="grades", size=(50, 25), enable_events=True), sg.VSeparator(),
+         sg.Text("", key='selected group', size=(50, 25))],
         [sg.HSeparator()],
         [sg.Text("Export grades to directory"), sg.Button("Export Grades")],
         [sg.HSeparator()],
@@ -197,6 +204,19 @@ def loadDirs():
     data = json.load(f)
     return data
 
+# --------------------
+# Save and Load Grades
+# --------------------
+
+def saveGrades(sub_scores, final_scores, groups):
+    scores = [sub_scores, final_scores, groups]
+    with open('savedGrades.json', 'w') as f:
+        json.dump(scores, f)
+
+def loadGrades():
+    f = open('savedGrades.json')
+    scores = json.load(f)
+    return scores
 # ------------------------
 # Defining all GUI windows
 # ------------------------
@@ -219,6 +239,12 @@ dispatch_dictionary = {'Start Grading': gradeAssignments,
 general_path = None
 path_TwinCat = None
 path_unity = None
+
+sub_scores = None
+final_scores = None
+
+groups = []
+sub_score_str_list = None
 
 dir_assignments = None
 dir_simulations = None
@@ -245,6 +271,16 @@ while True:
                     path_TwinCat = data[1]
                 if path_unity is None:
                     path_unity = data[2]
+
+            if os.path.exists('savedGrades.json'):
+                scores = loadGrades()
+                if sub_scores is None:
+                    sub_scores = scores[0]
+                if final_scores is None:
+                    final_scores = scores[1]
+                if len(groups) == 0 and len(scores) == 3:
+                    groups = scores[2]
+
             window2 = make_DirSetup()
         elif event == '-SIM RUNNER-':
             window1.hide()
@@ -256,6 +292,16 @@ while True:
                     path_TwinCat = data[1]
                 if path_unity is None:
                     path_unity = data[2]
+
+            if os.path.exists('savedGrades.json'):
+                scores = loadGrades()
+                if sub_scores is None:
+                    sub_scores = scores[0]
+                if final_scores is None:
+                    final_scores = scores[1]
+                if len(groups) == 0 and len(scores) == 3:
+                    groups = scores[2]
+
             window3 = make_SimRunner()
         elif event == '-GRADER-':
             window1.hide()
@@ -267,6 +313,16 @@ while True:
                     path_TwinCat = data[1]
                 if path_unity is None:
                     path_unity = data[2]
+
+            if os.path.exists('savedGrades.json'):
+                scores = loadGrades()
+                if sub_scores is None:
+                    sub_scores = scores[0]
+                if final_scores is None:
+                    final_scores = scores[1]
+                if len(groups) == 0 and len(scores) == 3:
+                    groups = scores[2]
+
             window4 = make_Grader()
         elif event == '-EXIT-' or event == sg.WIN_CLOSED:
             break
@@ -334,6 +390,8 @@ while True:
         if event == '-HOME-':
             window4.hide()
             window1 = make_Home()
+            saveGrades(sub_scores, final_scores, groups)
+
         elif event in dispatch_dictionary:
             func_to_call = dispatch_dictionary[event]
             sub_scores, final_scores = func_to_call(test_names, general_path)
@@ -345,8 +403,61 @@ while True:
                 else:
                     str_final = str_final + os.linesep + final_score
             window["grades"].update(value=str_final)
-            print(str)
+            saveGrades(sub_scores, final_scores, groups)
+
+            nmbr_assignments = int(len(sub_scores) / 5)
+            sub_score_str_list = np.zeros(shape=(nmbr_assignments, 5), dtype='object')
+            count = 0
+            for i in range(nmbr_assignments):
+                for j in range(5):
+                    sub_score_str_list[i][j] = sub_scores[j + count]
+
+                count += 5
+
+            groups = []
+            for i in range(len(sub_score_str_list)):
+                str = sub_score_str_list[i][0][6:9]
+                groups.append(str)
+            window["drop-down"].update(value=groups)
+
+        elif event == 'refresh_grades':
+            if sub_scores is not None:
+                nmbr_assignments = int(len(sub_scores) / 5)
+                sub_score_str_list = np.zeros(shape=(nmbr_assignments, 5),dtype='object')
+                count = 0
+                for i in range(nmbr_assignments):
+                    for j in range(5):
+                        sub_score_str_list[i][j] = sub_scores[j + count]
+
+                    count += 5
+
+                groups = []
+                for i in range(len(sub_score_str_list)):
+                    str = sub_score_str_list[i][0][6:9]
+                    groups.append(str)
+                window["drop-down"].update(value=groups)
+
+            if final_scores is not None:
+                str_final = ""
+                for final_score in final_scores:
+                    if len(str_final) == 0:
+                        str_final = final_score
+                    else:
+                        str_final = str_final + os.linesep + final_score
+                window["grades"].update(value=str_final)
+
+        elif event == "select group":
+            index = groups.index(values["drop-down"])
+            st = ""
+            for str in sub_score_str_list[index]:
+                if len(st) == 0:
+                    st = str
+                else:
+                    st = st + os.linesep + str
+            window["selected group"].update(value=st)
+
         elif event == '-EXIT-' or event == sg.WIN_CLOSED:
+            saveGrades(sub_scores, final_scores, groups)
             break
 
 window.close()
