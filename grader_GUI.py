@@ -175,7 +175,6 @@ while True:
                     final_scores = scores[1]
                 if len(groups) == 0 and len(scores) == 3:
                     groups = scores[2]
-
             window4 = make_Grader()
         elif event == '-EXIT-' or event == sg.WIN_CLOSED:
             break
@@ -266,12 +265,6 @@ while True:
                     sub_score_str_list[i][j] = sub_scores[j + count]
 
                 count += 5
-
-            groups = []
-            for i in range(len(sub_score_str_list)):
-                str = sub_score_str_list[i][0][6:9]
-                groups.append(str)
-            window["drop-down"].update(value=groups)
 
         elif event == 'refresh_grades':
             if sub_scores is not None:

@@ -63,6 +63,7 @@ def gradeAssignments(test_names, general_path):
     classes = ["correct", "incorrect"]
 
     assignments = []
+    exceptional_cases = []
     count = 0
 
     for name in test_names:
@@ -86,25 +87,40 @@ def gradeAssignments(test_names, general_path):
             # making a prediction using the ML model
             prediction = new_model.predict(sample_to_predict)
 
-            classif = np.argmax(prediction, axis=1)
-
             # reading the group number from the file names
             files = []
             for file in os.listdir(test_path):
                 if file.endswith(".avi"):
                     files.append(file)
 
-            # rewarding score if the test has been completed correctly
-            if classes[classif[0]] == "correct":
-                score += 1
+            acc_range = 0.75
+            if 1 - acc_range < prediction[0][0] < acc_range:
+                exceptional_cases.append(count)
 
-            if count == 0:
-                new_assignment = Assignment(files[name_counter][-7:-4])
-                new_assignment.setScore(score)
+                if count == 0:
+                    new_assignment = Assignment(files[name_counter][-7:-4])
+                    new_assignment.setScore(np.NaN)
 
-                assignments.append(new_assignment)
+                    assignments.append(new_assignment)
+                else:
+                    assignments[name_counter].setScore(np.NaN)
+
             else:
-                assignments[name_counter].setScore(score)
+
+                classif = np.argmax(prediction, axis=1)
+
+                # rewarding score if the test has been completed correctly
+                if classes[classif[0]] == "correct":
+                    score += 1
+
+                if count == 0:
+                    new_assignment = Assignment(files[name_counter][-7:-4])
+                    new_assignment.setScore(score)
+
+                    assignments.append(new_assignment)
+                else:
+                    assignments[name_counter].setScore(score)
+
 
             name_counter += 1
 
@@ -112,6 +128,9 @@ def gradeAssignments(test_names, general_path):
         end_test = time.time()
         duration = end_test - start_test
         print("Grading {} took {} seconds".format(name, duration))
+
+
+    print(exceptional_cases)
 
     sub_scores = []
     final_scores = []
