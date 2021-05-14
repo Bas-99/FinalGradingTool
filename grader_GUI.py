@@ -98,6 +98,7 @@ final_scores = None
 
 groups = []
 sub_score_str_list = None
+exceptional_cases = []
 
 dir_assignments = None
 dir_simulations = None
@@ -266,6 +267,10 @@ while True:
 
                 count += 5
 
+            data2 = loadGrades()
+            groups2 = data2[2]
+            window["drop-down"].update(value=groups2)
+
         elif event == 'refresh_grades':
             if sub_scores is not None:
                 nmbr_assignments = int(len(sub_scores) / 5)
@@ -301,6 +306,50 @@ while True:
                 else:
                     st = st + os.linesep + str
             window["selected group"].update(value=st)
+
+            for line in range(len(sub_score_str_list[index])):
+                if sub_score_str_list[index][line][14:17] == "nan":
+                    question = "Is {} of group {} correct?".format(sub_score_str_list[index][line][29:35],
+                                                                   sub_score_str_list[index][line][0:9])
+                    exceptional_cases.append(question)
+
+            if len(exceptional_cases) == 0:
+                pass
+            else:
+                window["nan evaluator"].update(value=exceptional_cases[0])
+
+        elif event == 'yes - correct':
+            if len(exceptional_cases) == 0:
+                pass
+            else:
+                index = groups.index(values["drop-down"])
+
+                group = index * 5
+                test = 0
+
+                if not exceptional_cases[0][3:9] == 'test2 ':
+                    test = test_names.index(exceptional_cases[0][3:9])
+                else:
+                    test = test_names.index(exceptional_cases[0][3:8])
+
+                sub_scores[test + group] = sub_scores[test + group].replace('nan', '1')
+
+                exceptional_cases = exceptional_cases[1:]
+                if len(exceptional_cases) == 0:
+                    pass
+                else:
+                    window["nan evaluator"].update(value=exceptional_cases[0])
+
+                sub_score_str_list[index][test] = sub_scores[test + group]
+
+                st = ""
+                for str in sub_score_str_list[index]:
+                    if len(st) == 0:
+                        st = str
+                    else:
+                        st = st + os.linesep + str
+                window["selected group"].update(value=st)
+
 
         elif event == '-EXIT-' or event == sg.WIN_CLOSED:
             saveGrades(sub_scores, final_scores, groups)

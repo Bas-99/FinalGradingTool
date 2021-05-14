@@ -9,6 +9,7 @@
 # ----------------------------
 
 import PySimpleGUI as sg
+from os import path
 
 # --------------------------------------
 # Importing functions from other modules
@@ -116,8 +117,12 @@ def make_SimRunner():
     ]
     return sg.Window('Simulation runner', layout, finalize=True)
 
-data = loadGrades()
-groups = data[2]
+groups = []
+
+if path.exists("savedGrades.json"):
+    data = loadGrades()
+    groups = data[2]
+
 def make_Grader():
     layout = [
         [sg.Text('Grading Assignments', font=("Helvetica", 15)),sg.Button("refresh_grades")],
@@ -128,9 +133,10 @@ def make_Grader():
         [sg.Text("Final scores per assignments", font=("Helvetica", 13), size=(35, 1)), sg.VSeparator(),
          sg.Text("Sub-scores for selected assignment", font=("Helvetica", 13), size=(35, 1))],
         [sg.HSeparator()],
-        [sg.Combo(groups, key='drop-down'),sg.Button("select group")],
+        [sg.Combo(groups, key='drop-down'), sg.Button("select group")],
         [sg.Text("", key="grades", size=(50, 25), enable_events=True), sg.VSeparator(),
          sg.Text("", key='selected group', size=(50, 25))],
+        [sg.Text("", size=(50, 1)), sg.VSeparator(), sg.Text("", size=(35, 1), key="nan evaluator"), sg.Button("yes - correct")],
         [sg.HSeparator()],
         [sg.Text("Export grades to directory"), sg.Button("Export Grades")],
         [sg.HSeparator()],
