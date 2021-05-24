@@ -23,7 +23,7 @@ from TestExecuter import testExecuter
 # Simulation Executer Function
 # ----------------------------
 
-def simulationExecuter(dir_simulations, dir_assignments,assignments, path_unity,
+def simulationExecuter(dir_simulations, dir_assignments, assignments, path_unity,
                        path_TwinCat, test_names, dir_scratch):
 
     # defining frame rate
@@ -38,13 +38,17 @@ def simulationExecuter(dir_simulations, dir_assignments,assignments, path_unity,
     for i in range(len(assignments)):
         as_start = time.time()
         folder_dh_DT = os.path.join(dir_assignments, assignments[i], path2_dh_DT)
+
         # running the testExecuter() function for every assignment
         testExecuter(dir_simulations, fps, fourcc_avi, folder_dh_DT, assignments[i],
                      path_unity, path_TwinCat, test_names, dir_scratch)
+
+        # printing the total test time per assignment in the Python console
         as_end = time.time()
         as_duration = as_end - as_start
         print("Performing all tests on " + assignments[i] + " took: " + str(as_duration) + " seconds")
 
+    # printing the total simulation time for all tests for all assignments in the Python console
     total_end = time.time()
     total_duration = total_end - total_start
     print("All assingments were analyzed in: " + str(total_duration / 60) + " minutes")
