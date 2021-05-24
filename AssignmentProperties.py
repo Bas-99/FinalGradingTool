@@ -27,6 +27,7 @@ class Assignment(object):
     _counter = 0
     instances = []
 
+    # initializing the Assignment class
     def __init__(self, group, scores=None):
         if scores is None:
             scores = []
@@ -35,30 +36,34 @@ class Assignment(object):
         self.group = group
         self.scores = scores
 
+    # setting the sub scores for a Assignment instance
     def setScore(self, score):
         self.scores.append(score)
 
+    # retrieving the final score from the sub scores of an instance
     def getFinalScore(self):
         return sum(self.scores)
 
+    # retrieving the string including the sub scores
     def getSubScoreString(self, assignment, cnt, test_name):
         str_score = "Group {} got {} points for {}".format(
             assignment.group, assignment.scores[cnt], test_name
         )
         return str_score
 
+    # retrieving the string including the final scores
     def getFinalScoreString(self, assignment, test_names):
         str_final = "Group {} got {} points out of {} total".format(
             assignment.group, assignment.getFinalScore(), len(test_names)
         )
         return str_final
 
-
 # -----------------------------------------
 # Function to Instances to Class Assignment
 # -----------------------------------------
 
 def gradeAssignments(test_names, general_path):
+    # setting some variables, which are used in the grading process
     seq_len = [250, 350, 350, 350, 350]
     dir_simulations = os.path.join(general_path, "all_assignment_simulations")
     dir_models = os.path.join(general_path, "ml_models")
@@ -68,7 +73,11 @@ def gradeAssignments(test_names, general_path):
     exceptional_cases = []
     count = 0
 
+    # looping over every test in test_names
     for name in test_names:
+
+        # starting a timer and joining the directories to the
+        # corresponding test in the loop
         start_test = time.time()
         test_path = os.path.join(dir_simulations, name)
         file_path = os.path.join(dir_models, name)
@@ -95,7 +104,9 @@ def gradeAssignments(test_names, general_path):
                 if file.endswith(".avi"):
                     files.append(file)
 
+            # adding an accuracy range to filter out the exceptional cases
             acc_range = 0.75
+            # below the exceptional cases will be filtered
             if 1 - acc_range < prediction[0][0] < acc_range:
                 exceptional_cases.append(count)
 
@@ -107,14 +118,15 @@ def gradeAssignments(test_names, general_path):
                 else:
                     assignments[name_counter].setScore(np.NaN)
 
+            # below the scores for non exceptional cases are computed
             else:
-
                 classif = np.argmax(prediction, axis=1)
 
                 # rewarding score if the test has been completed correctly
                 if classes[classif[0]] == "correct":
                     score += 1
 
+                # setting the scores to a Assignment class instance
                 if count == 0:
                     new_assignment = Assignment(files[name_counter][-7:-4])
                     new_assignment.setScore(score)
@@ -123,31 +135,38 @@ def gradeAssignments(test_names, general_path):
                 else:
                     assignments[name_counter].setScore(score)
 
-
             name_counter += 1
 
+        # computing the grading duration and printing it in the Python console
         count += 1
         end_test = time.time()
         duration = end_test - start_test
         print("Grading {} took {} seconds".format(name, duration))
 
-
-    print(exceptional_cases)
-
+    # initializing two lists for the scores
     sub_scores = []
     final_scores = []
 
+    # looping over all Assignment class instances
     for assignment in assignments:
         cnt = 0
+
+        # looping over all tests for each class instance
         for test_name in test_names:
+
+            # computing the sub score strings for each test
             sub_score = assignment.getSubScoreString(assignment, cnt, test_name)
             sub_scores.append(sub_score)
             cnt += 1
+
+        # computing the final score strings for each group
         final_score = assignment.getFinalScoreString(assignment, test_names)
         final_scores.append(final_score)
 
+    # adding all scores to one variable
     all_scores = sub_scores + final_scores
 
+    # saving/writing the all_scores variable to final_grades.txt file
     grade_file_name = "final_grades.txt"
     completeName = os.path.join(general_path, grade_file_name)
 
@@ -156,5 +175,6 @@ def gradeAssignments(test_names, general_path):
         grade_file.write('{}\n'.format(line))
     grade_file.close()
 
+    # returning the sub_scores and final_scores variables
     return sub_scores, final_scores
 
