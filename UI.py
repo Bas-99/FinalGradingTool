@@ -136,7 +136,7 @@ def make_Grader():
         [sg.Combo(groups, key='drop-down'), sg.Button("select group")],
         [sg.Text("", key="grades", size=(50, 25), enable_events=True), sg.VSeparator(),
          sg.Text("", key='selected group', size=(50, 25))],
-        [sg.Text("", size=(50, 1)), sg.VSeparator(), sg.Text("", size=(35, 1), key="nan evaluator"), sg.Button("yes - correct")],
+        [sg.Text("", size=(50, 1)), sg.VSeparator(), sg.Text("", size=(35, 1), key="nan evaluator"), sg.Button("correct"), sg.Button("incorrect")],
         [sg.HSeparator()],
         [sg.Text("Export grades to directory"), sg.Button("Export Grades")],
         [sg.HSeparator()],

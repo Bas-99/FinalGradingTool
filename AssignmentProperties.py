@@ -25,11 +25,13 @@ from Video2Frames import create_data
 
 class Assignment(object):
     _counter = 0
+    instances = []
 
     def __init__(self, group, scores=None):
         if scores is None:
             scores = []
         Assignment._counter += 1
+        self.instances.append(self)
         self.group = group
         self.scores = scores
 
@@ -147,7 +149,7 @@ def gradeAssignments(test_names, general_path):
     all_scores = sub_scores + final_scores
 
     grade_file_name = "final_grades.txt"
-    completeName = os.path.join(general_path,grade_file_name)
+    completeName = os.path.join(general_path, grade_file_name)
 
     grade_file = open(completeName, "w")
     for line in all_scores:
@@ -155,3 +157,4 @@ def gradeAssignments(test_names, general_path):
     grade_file.close()
 
     return sub_scores, final_scores
+

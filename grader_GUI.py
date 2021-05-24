@@ -17,7 +17,7 @@ import time
 # Importing functions from other modules
 # --------------------------------------
 
-from AssignmentProperties import gradeAssignments
+from AssignmentProperties import gradeAssignments, Assignment
 from SimulationExecuter import simulationExecuter
 from UI import make_Home, make_DirSetup, make_SimRunner, make_Grader
 from SavingLoading import saveGrades, saveDirs, loadGrades, loadDirs
@@ -240,6 +240,7 @@ while True:
             break
 
     if window == window4:
+
         if event == '-HOME-':
             window4.hide()
             window1 = make_Home()
@@ -318,7 +319,7 @@ while True:
             else:
                 window["nan evaluator"].update(value=exceptional_cases[0])
 
-        elif event == 'yes - correct':
+        elif event == 'correct':
             if len(exceptional_cases) == 0:
                 pass
             else:
@@ -333,6 +334,28 @@ while True:
                     test = test_names.index(exceptional_cases[0][3:8])
 
                 sub_scores[test + group] = sub_scores[test + group].replace('nan', '1')
+
+                new_final_scores = []
+                for i in range(0, 5):
+                    if sub_scores[group + i][14:17] == 'nan':
+                        break
+                    else:
+                        new_score = int(sub_scores[group + i][14])
+                        new_final_scores.append(new_score)
+
+                new_final_score = sum(new_final_scores)
+
+                if len(new_final_scores) == 5:
+                    final_scores[index] = final_scores[index].replace('nan', "{}".format(new_final_score))
+
+                if final_scores is not None:
+                    str_final = ""
+                    for final_score in final_scores:
+                        if len(str_final) == 0:
+                            str_final = final_score
+                        else:
+                            str_final = str_final + os.linesep + final_score
+                    window["grades"].update(value=str_final)
 
                 exceptional_cases = exceptional_cases[1:]
                 if len(exceptional_cases) == 0:
@@ -350,6 +373,63 @@ while True:
                         st = st + os.linesep + str
                 window["selected group"].update(value=st)
 
+                saveGrades(sub_scores, final_scores, groups)
+
+        elif event == 'incorrect':
+            if len(exceptional_cases) == 0:
+                pass
+            else:
+                index = groups.index(values["drop-down"])
+
+                group = index * 5
+                test = 0
+
+                if not exceptional_cases[0][3:9] == 'test2 ':
+                    test = test_names.index(exceptional_cases[0][3:9])
+                else:
+                    test = test_names.index(exceptional_cases[0][3:8])
+
+                sub_scores[test + group] = sub_scores[test + group].replace('nan', '0')
+
+                new_final_scores = []
+                for i in range(0, 5):
+                    if sub_scores[group + i][14:17] == 'nan':
+                        break
+                    else:
+                        new_score = int(sub_scores[group + i][14])
+                        new_final_scores.append(new_score)
+
+                new_final_score = sum(new_final_scores)
+
+                if len(new_final_scores) == 5:
+                    final_scores[index] = final_scores[index].replace('nan', "{}".format(new_final_score))
+
+                if final_scores is not None:
+                    str_final = ""
+                    for final_score in final_scores:
+                        if len(str_final) == 0:
+                            str_final = final_score
+                        else:
+                            str_final = str_final + os.linesep + final_score
+                    window["grades"].update(value=str_final)
+
+                exceptional_cases = exceptional_cases[1:]
+                if len(exceptional_cases) == 0:
+                    pass
+                else:
+                    window["nan evaluator"].update(value=exceptional_cases[0])
+
+                sub_score_str_list[index][test] = sub_scores[test + group]
+
+                st = ""
+                for str in sub_score_str_list[index]:
+                    if len(st) == 0:
+                        st = str
+                    else:
+                        st = st + os.linesep + str
+                window["selected group"].update(value=st)
+
+                saveGrades(sub_scores, final_scores, groups)
 
         elif event == '-EXIT-' or event == sg.WIN_CLOSED:
             saveGrades(sub_scores, final_scores, groups)
