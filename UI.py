@@ -101,6 +101,9 @@ def make_DirSetup():
     ]
     return sg.Window('Directory setup', layout, finalize=True)
 
+# defining the simulation runner window, which should contain the functionalities to
+# start the simulation, it should also contain buttons to navigate to the other windows
+# this also includes some warnings regarding the simulation process
 def make_SimRunner():
     layout = [
         [sg.Text('Simulation runner', font=("Helvetica", 15))],
@@ -117,12 +120,16 @@ def make_SimRunner():
     ]
     return sg.Window('Simulation runner', layout, finalize=True)
 
+# loading the groups from savedGrades.json
 groups = []
-
 if path.exists("savedGrades.json"):
     data = loadGrades()
     groups = data[2]
 
+# defining the grading window, which should contain functionalities to load old grades,
+# start the grading process, selecting a group for detailed grading overview,
+# exceptional case evaluator to select if correct or incorrect, it should also
+# contain buttons to navigate to the other windows
 def make_Grader():
     layout = [
         [sg.Text('Grading Assignments', font=("Helvetica", 15)),sg.Button("refresh_grades")],
@@ -136,7 +143,8 @@ def make_Grader():
         [sg.Combo(groups, key='drop-down'), sg.Button("select group")],
         [sg.Text("", key="grades", size=(50, 25), enable_events=True), sg.VSeparator(),
          sg.Text("", key='selected group', size=(50, 25))],
-        [sg.Text("", size=(50, 1)), sg.VSeparator(), sg.Text("", size=(35, 1), key="nan evaluator"), sg.Button("correct"), sg.Button("incorrect")],
+        [sg.Text("", size=(50, 1)), sg.VSeparator(), sg.Text("", size=(35, 1), key="nan evaluator"),
+         sg.Button("correct"), sg.Button("incorrect")],
         [sg.HSeparator()],
         [sg.Text("Export grades to directory"), sg.Button("Export Grades")],
         [sg.HSeparator()],
