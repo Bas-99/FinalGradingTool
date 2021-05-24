@@ -22,6 +22,7 @@ import signal
 
 def appRunner(path_unity, path_TwinCat, folder_dh_DT):
     global run_once
+
     # definition of the required file names (standard names)
     dir_sim = path_unity
 
@@ -148,9 +149,13 @@ def appRunner(path_unity, path_TwinCat, folder_dh_DT):
 # ------------------------------
 
 def appCloser():
+
+    # checking if TwinCat is active, if this is true than close the application
     for pid in (process.pid for process in psutil.process_iter() if process.name() == "devenv.exe"):
         os.kill(pid,signal.SIGTERM)
     print("TwinCat successfully closed")
+
+    # checking if Unity is active, if this is true than close the application
     for pid in (process.pid for process in psutil.process_iter() if
                 process.name() == "Festo MPS Distributing and Handling.exe"):
         os.kill(pid, signal.SIGTERM)
