@@ -19,7 +19,6 @@ import os
 img_height, img_width = 64, 64
 classes = ["incorrect", "correct"]
 
-
 # --------------------------------------
 # Definition of frame extracter function
 # --------------------------------------
@@ -32,8 +31,10 @@ def frames_extraction(video_path, seq_len):
     # Used as counter variable
     count = 1
 
+    # looping over all frames in the video
     while count <= seq_len:
 
+        # reading the frames and resizing them
         success, image = vidObj.read()
         if success:
             image = cv2.resize(image, (img_height, img_width))
@@ -57,8 +58,11 @@ def create_data(input_dir, seq_len):
 
     files_list = os.listdir(input_dir)
 
+    # looping over all files in directory
     for f in files_list:
         frames = frames_extraction(os.path.join(input_dir, f), seq_len)
+
+        # saving the frames to the data array X
         if len(frames) == seq_len:
             X.append(frames)
 
