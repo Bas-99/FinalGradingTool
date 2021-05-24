@@ -6,8 +6,13 @@ This grading tool is developed for a Bachelor End Project at the TU/e. This auto
 
 ![Grader Tool GUI](images_readme/home.PNG)
 ## Installation
-TODO: add install package.
-(Required packages)
+- Install a python IDE (Pycharm is used to develop this project) download link: https://www.jetbrains.com/pycharm/download/#section=windows 
+- Make sure Python is correctly installed on your PC (Python 3.9 is used to develop this project) 
+download link: https://www.python.org/downloads/release/python-395/
+  
+- Make sure to download all dependencies/libraries, either using pip in the command prompt or within the IDE itself
+- Download the separate zip-file containing all the trained machine learning models
+- Clone the project from this GitHub page, or use the installer: ....
 ## Configuration
 This chapter is split into two parts, as this tool can be used for grading. But this tool also needs further improvements to make the grading experience and performance even better.
 ### Use for grading
@@ -16,6 +21,9 @@ Follow the steps for the installation and run the grader.exe (to be added). Afte
 ### Use for development
 For development one needs an IDE to work with the python scripts. This project is made with PyCharm, but you are free to use whatever you want. The seperate files are made as structured and clean as possible to make it easier to work with.
 
+For development one can adjust the project to improve the performance or handlability of the project. Furthermore one can use the TensorFlowTrainingModle.ipynb file inside the TensorFlowFiles folder to improve the machine learning models or train new models.
+This file is made in google colab, the machine learning models are also trained in this environment (https://colab.research.google.com). In google colab one can select the runtime type, which allows acces to powerful GPU's to enhance the training performance for the algorithms.
+The google colab file should be self explanatory to use and improve, furthermore google colab and tensorflow is very well documented.
 ## Usage
 First the guide for the GUI will be discussed. When running the application, the Home screen listed in the figure above will pop up. From here you have the following options:
 1. Directory Setup
@@ -41,12 +49,18 @@ Carefully read the notes listed in this GUI to make sure no problems are caused 
 
 In this window press start grading, to start the grading process. After this is finished, the final grades will pop up on the left. To see the scores for the individual tests per assignments, select a group on the left and the scores will show on the right as seen in the image. If one thinks it is necessary, you can export the grades to a text file using the Export Grades button.
 
+As seen in the green and red rectangle, some scores still have 'nan' as a score, which means the algorithm could not predict these tests with a high enough accuracy. In the orange rectangle the question is asked whether these tests are correct or incorrect. To answer this question, navigate to the all_simulations folder in the chosen directory and select the specified video. Play back the video and see if the test is computed correct or incorrect. Click the corresponding button and the values will be updated as seen in the image of the GUI below.
 
+![Grader Tool Grader Updated Grades](images_readme/grader2.PNG)
 
 
 
 ## Points of improvement
 
-
+- First of all, the simulation execution process is not ideal. This takes about 2 hours to complete for 11 assignments. I think this should be made shorter, the minimal possible time to achieve is about 30 minutes. The way to tackle this problem is by defining another method of executing the tests. Now the program has to restart TwinCat and Unity for every test for every group, which means it has to do this 55 times.
+- Furthermore it was seen that the trained machine learning model for test2 didn't show as nice of results as the other trained models. This is probably because this test was harder to judge. This is the test that tests the correct order of products. 
+This problem can possibly be tackled by adding more data (which is hard in this case as data is scarce and there should be data left to test and validate the models). Another way to tackle this problem is by using another shape of machine learning model i.e. different layers, different numbers of filters, etc.
+  
+- At last, tests for more aspects of the system should be added, so the grading tool can grade larger parts of the assignments. 
 
 
