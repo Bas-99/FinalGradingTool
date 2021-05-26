@@ -211,7 +211,7 @@ while True:
         # show the simulation runner window
         if event == '-SIM RUNNER-':
             window2.hide()
-            saveDirs(general_path, path_TwinCat, path_unity, dir_assignments, dir_models)
+            saveDirs(general_path, path_TwinCat, path_unity)
             window3 = make_SimRunner()
 
         # action if the -HOME- button is pressed
@@ -219,7 +219,7 @@ while True:
         # show the home window
         elif event == '-HOME-':
             window2.hide()
-            saveDirs(general_path, path_TwinCat, path_unity, dir_assignments, dir_models)
+            saveDirs(general_path, path_TwinCat, path_unity)
             window1 = make_Home()
 
         # action if the Submit directory button is pressed
@@ -260,7 +260,7 @@ while True:
         # action if the window is closed
         # saving all the paths/directories and breaking out of the loop
         elif event == sg.WIN_CLOSED:
-            saveDirs(general_path, path_TwinCat, path_unity, dir_assignments, dir_models)
+            saveDirs(general_path, path_TwinCat, path_unity)
             break
 
         # action if the refresh button is pressed
@@ -294,11 +294,13 @@ while True:
             dir_scratch = ScratchFolder()
             assignments = getAssignments()
             dir_simulations = FolderAdder(test_names)
+
+            func_to_call2 = dispatch_dictionary['-dir initializer-']
+            dir_assignments = func_to_call2(general_path)
+
             func_to_call = dispatch_dictionary['-SIM EXECUTER-']
-            func_to_call(dir_simulations, dir_assignments,
-                         assignments, path_unity,
-                         path_TwinCat, test_names,
-                         dir_scratch)
+            func_to_call(dir_simulations, dir_assignments, assignments,
+                         path_unity, path_TwinCat, test_names, dir_scratch)
             time.sleep(5)
             window3.un_hide()
 
@@ -402,6 +404,7 @@ while True:
         # action if the select group button is pressed
         # read the group number from the selected group in the drop-down menu
         elif event == "select group":
+            exceptional_cases = []
             index = groups.index(values["drop-down"])
 
             # make a string which contains all scores per test for the selected group

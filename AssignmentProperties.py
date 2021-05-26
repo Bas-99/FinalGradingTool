@@ -167,18 +167,6 @@ def gradeAssignments(test_names, general_path):
         final_score = assignment.getFinalScoreString(assignment, test_names)
         final_scores.append(final_score)
 
-    # adding all scores to one variable
-    all_scores = sub_scores + final_scores
-
-    # saving/writing the all_scores variable to final_grades.txt file
-    grade_file_name = "final_grades.txt"
-    completeName = os.path.join(general_path, grade_file_name)
-
-    grade_file = open(completeName, "w")
-    for line in all_scores:
-        grade_file.write('{}\n'.format(line))
-    grade_file.close()
-
     # returning the sub_scores and final_scores variables
     return sub_scores, final_scores
 

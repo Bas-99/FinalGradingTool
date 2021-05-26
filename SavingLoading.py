@@ -14,8 +14,8 @@ import json
 # Save and Load Data
 # ------------------
 
-def saveDirs(general_path, path_TwinCat, path_unity, dir_assignments, dir_models):
-    dirs = [general_path, path_TwinCat, path_unity, dir_assignments, dir_models]
+def saveDirs(general_path, path_TwinCat, path_unity):
+    dirs = [general_path, path_TwinCat, path_unity]
     with open('savedData.json', 'w') as f:
         json.dump(dirs, f)
 
