@@ -104,6 +104,10 @@ def gradeAssignments(test_names, general_path):
                 if file.endswith(".avi"):
                     files.append(file)
 
+            # uncomment section below to print the accuracy and the group number (used for testing)
+            # print(prediction[0][0])
+            # print(files[name_counter][-7:-4])
+
             # adding an accuracy range to filter out the exceptional cases
             acc_range = 0.75
             # below the exceptional cases will be filtered

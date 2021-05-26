@@ -21,6 +21,7 @@ from AssignmentProperties import gradeAssignments, Assignment
 from SimulationExecuter import simulationExecuter
 from UI import make_Home, make_DirSetup, make_SimRunner, make_Grader
 from SavingLoading import saveGrades, saveDirs, loadGrades, loadDirs
+from makeTable import make_data_frame
 
 # -------------------------------
 # Required Folder Setup Functions
@@ -86,7 +87,8 @@ window1, window2, window3, window4 = make_Home(), None, None, None
 dispatch_dictionary = {'Start Grading': gradeAssignments,
                        '-dir initializer-': StudentAssignmentFolder,
                        '-dir initializer2': MlModelFolder,
-                       '-SIM EXECUTER-': simulationExecuter}
+                       '-SIM EXECUTER-': simulationExecuter,
+                       'Export Grades': make_data_frame}
 
 # ----------------------
 # Initializing variables
@@ -329,7 +331,7 @@ while True:
         # this will call the gradeAssignments function from the dispatch dictionary
         # the sub_scores and final_scores variables will be changed to the returned
         # values by the called function.
-        elif event in dispatch_dictionary:
+        elif event == 'Start Grading':
             func_to_call = dispatch_dictionary[event]
             sub_scores, final_scores = func_to_call(test_names, general_path)
 
@@ -567,6 +569,13 @@ while True:
 
                 # saving the new scores to the savedGrades.json file
                 saveGrades(sub_scores, final_scores, groups)
+
+        # action if the Export Grades button is pressed
+        # the make_data_frame function will be called, to convert the
+        # scores into a dataframe and then export it to excel in the general path
+        elif event == 'Export Grades':
+            func_to_call = dispatch_dictionary[event]
+            func_to_call(general_path)
 
         # action if the -EXIT- button is pressed
         # save the sub_scores and final_scores and graded groups
