@@ -84,7 +84,7 @@ def make_data_frame(general_path):
     df = pd.DataFrame(columns)
 
     # adding a row with the total scores per test
-    df.loc['Total score per test', 'Test 1':'Test 5'] = df.sum(axis=0)
+    df.loc['Total score per test', :] = df.sum(axis=0)
 
     # adding a column with the total scores per group
     df.loc[:, 'Total score (per group)'] = df.sum(axis=1)
