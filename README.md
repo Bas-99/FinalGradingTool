@@ -42,7 +42,7 @@ The google colab file should be self explanatory to use and improve, furthermore
 
 The project in this repository is structured as seen in the figure below.
 
-![Project architecture](images_readme/autograder.PNG)
+![Project architecture](images_readme/autograder.png)
 
 This figure should help to see the general coherance between the different *.py files/ modules inside this project. The files itself are precisely commented to try and describe the functionalities of all the pieces of code and functions. Furthermore all different files are built up in the same structure to make it easier to work with and to find certain things. 
 
