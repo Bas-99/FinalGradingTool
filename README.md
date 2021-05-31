@@ -10,7 +10,23 @@ This grading tool is developed for a Bachelor End Project at the TU/e. This auto
 - Make sure Python is correctly installed on your PC (Python 3.9 is used to develop this project) 
 download link: https://www.python.org/downloads/release/python-395/
   
-- Make sure to download all dependencies/libraries, either using pip in the command prompt or within the IDE itself
+- Make sure to download all dependencies/libraries, either using pip in the command prompt or within the IDE itself:
+  - ctypes
+  - cv2
+  - functools
+  - mss
+  - mss.tools
+  - numpy
+  - openpyxl
+  - os
+  - pandas
+  - psutil
+  - pyautogui
+  - PysimpleGUI 
+  - signal
+  - tensorflow
+  - time
+
 - Download the separate zip-file containing all the trained machine learning models
 - Clone the project from this GitHub page, or use the installer: ....
 ## Configuration
@@ -53,6 +69,10 @@ As seen in the green and red rectangle, some scores still have 'nan' as a score,
 
 ![Grader Tool Grader Updated Grades](images_readme/grader2.PNG)
 
+Finally the grades may be exported to an excel (*.xlsx) file to have a neatly organised table with all the results. It shows all sub-scores and final scores per group. It also shows the total points of all assignments for one test and the overall total points scored, these two results might come in handy when analysing the general performance of students. An example of the excel file is seen in the figure below.
+
+
+![excel table](images_readme/excel_table.PNG)
 
 
 ## Points of improvement
