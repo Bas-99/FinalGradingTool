@@ -27,7 +27,8 @@ download link: https://www.python.org/downloads/release/python-395/
   - time
 
 - Download the separate zip-file containing all the trained machine learning models (contact: b.v.d.rijt@student.tue.nl)
-- Clone the project from this GitHub page, or use the installer: ....
+- Clone the project from this GitHub page, or use the download link: https://drive.google.com/file/d/1yiHaQFGUrIWMEMcXo4hBZ4svDCS1LxjJ/view?usp=sharing 
+  When clicking this link, the download should start. After downloading, un-zip the folder and look for grader_GUI.exe and run the application.
 ## Configuration
 This chapter is split into two parts, as this tool can be used for grading. But this tool also needs further improvements to make the grading experience and performance even better.
 ### Use for grading
